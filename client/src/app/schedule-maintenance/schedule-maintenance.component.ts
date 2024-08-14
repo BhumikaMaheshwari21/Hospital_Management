@@ -1,122 +1,106 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { of } from 'rxjs';
-
+ 
+ 
 @Component({
   selector: 'app-schedule-maintenance',
   templateUrl: './schedule-maintenance.component.html',
   styleUrls: ['./schedule-maintenance.component.scss']
 })
 export class ScheduleMaintenanceComponent implements OnInit {
-  itemForm!: FormGroup;
-  formModel: any = { status: null };
-  showError: boolean = false;
-  errorMessage: any;
-  hospitalList: any = [];
-  assignModel: any = {};
+  itemForm: FormGroup;
+ 
+  formModel:any={status:null};
+  showError:boolean=false;
+  errorMessage:any;
+  hospitalList:any=[];
+  assignModel: any={};
+ 
   showMessage: any;
   responseMessage: any;
-  equipmentList: any = [];
-  hospitalName: any;
-  maintenanceSuccess$: any;
-  maintenanceError$: any;
-
-  constructor(public router: Router, public httpService: HttpService, private fb: FormBuilder, private service:AuthService){
-    this.itemForm = this.fb.group({
-      scheduledDate: [this.formModel.scheduledDate, [Validators.required, this.dateValidator]],
-      completedDate: [this.formModel.completedDate, [Validators.required, this.dateValidator]],
-      description: [this.formModel.description, [Validators.required]],
-      status: [this.formModel.status, [Validators.required]],
-      equipmentId: [this.formModel.equipmentId, [Validators.required]],
-      hospitalId: [this.formModel.hospitalId, [Validators.required]]
+  equipmentList: any=[];
+  constructor(public router:Router, public httpService:HttpService, private formBuilder: FormBuilder, private authService:AuthService)
+    {
+      this.itemForm = this.formBuilder.group({
+        scheduledDate: [this.formModel.scheduledDate,[ Validators.required, this.dateValidator]],
+        completedDate: [this.formModel.completedDate,[ Validators.required, this.dateValidator]],
+        description: [this.formModel.description,[ Validators.required]],
+        status: [this.formModel.status,[ Validators.required]],
+        equipmentId: [this.formModel.equipmentId,[ Validators.required]],
+        hospitalId: [this.formModel.hospitalId,[ Validators.required]],
+       
     });
+ 
+ 
+ 
+}  ngOnInit(): void {
+  this.getHospital();
+ 
   }
-
-  ngOnInit(): void {
-    this.getHospital();
-  }
-
-  dateValidator(control: AbstractControl): ValidationErrors | null{
+  dateValidator(control: AbstractControl): ValidationErrors | null {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-    if(!datePattern.test(control.value)){
-      return {invalidDate: true}
+ 
+    if (!datePattern.test(control.value)) {
+      return { invalidDate: true };
     }
+ 
     return null;
   }
-
-  getHospital(){
-    if (!this.hospitalName) {
-      // this.showError = true;
-      // this.errorMessage = 'Please enter a hospital name.';
-      return;
-    }
-
-    this.httpService.getHospital().subscribe(
-      (hospital: any) => {
-        if (hospital) {
-          this.assignModel.hospital = hospital;
-          console.log('Selected Hospital:', hospital);
-        } else {
-          this.showError = true;
-          this.errorMessage = 'Selected hospital not found.';
-        }
-      },
-      (error) => {
-        this.showError = true;
-        this.errorMessage = 'Unable to fetch hospital details.';
-      }
-    );
+  getHospital() {
+    this.hospitalList=[];
+    this.httpService.getHospital().subscribe((data: any) => {
+      this.hospitalList=data;
+      console.log(this.hospitalList);
+    }, error => {
+      // Handle error
+      this.showError = true;
+      this.errorMessage = "An error occurred while logging in. Please try again later.";
+      console.error('Login error:', error);
+    });;
   }
-
-  onSubmit(){
-    
-    if(this.itemForm.invalid){
-      return;
-    }
-    else
+ 
+  onSubmit()
+  {
+    debugger;
+    if(this.itemForm.valid)
     {
-      const formData= this.itemForm.value;
-      console.log(formData);
-      const maintenanceId = formData.id;
-      this.httpService.scheduleMaintenance(maintenanceId,formData).subscribe(
-        (res: any) => {
-          this.maintenanceSuccess$ = of("Data added created successfully!");
-        },
-        (error) => {
-          this.maintenanceError$ = of("Unable to add data!");
-        }
-      );
-      }
-  }
-
-  onHospitalSelect() {
-    this.httpService.getHospital().subscribe(
-      (hospital: any) => {
-        if (hospital) {
-          this.assignModel.hospital = hospital;
-          console.log('Selected Hospital:', hospital);
-        } else {
+      if (this.itemForm.valid) {
+        this.showError = false;
+     
+        this.httpService.scheduleMaintenance(this.itemForm.value,1).subscribe((data: any) => {
+          this.itemForm.reset();
+          this.showMessage=true;
+          this.responseMessage='Save Successfully';
+         
+        }, error => {
+          // Handle error
           this.showError = true;
-          this.errorMessage = 'Selected hospital not found.';
-        }
-      },
-      (error) => {
-        this.showError = true;
-        this.errorMessage = 'Unable to fetch hospital details.';
+          this.errorMessage = "An error occurred while logging in. Please try again later.";
+          console.error('Login error:', error);
+        });;
+      } else {
+        this.itemForm.markAllAsTouched();
       }
-    );
+    }
+    else{
+      this.itemForm.markAllAsTouched();
+    }
   }
-
-  
+  onHospitalSelect($event: any) {
+   let id= $event.target.value
+   this.equipmentList=[];
+   this.httpService.getEquipmentById(id).subscribe((data: any) => {
+     this.equipmentList=data;
+     console.log(this.equipmentList);
+   }, error => {
+     // Handle error
+     this.showError = true;
+     this.errorMessage = "An error occurred while logging in. Please try again later.";
+     console.error('Login error:', error);
+   });;
+ 
 }
-
-
-
-
-
-
-
-
+}

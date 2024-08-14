@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-
+ 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,11 +14,11 @@ export class AppComponent {
   {
    
     this.IsLoggin=authService.getLoginStatus;
-    this.roleName=authService.getRole();
+    this.roleName=authService.getRole;
     if(this.IsLoggin==false)
     {
-      this.router.navigateByUrl('/login'); 
-    
+      this.router.navigateByUrl('/login');
+   
     }
   }
   logout()
@@ -26,5 +26,5 @@ export class AppComponent {
   this.authService.logout();
   window.location.reload();
 }
-
+ 
 }
