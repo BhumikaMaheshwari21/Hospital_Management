@@ -22,6 +22,8 @@ export class MaintenanceComponent implements OnInit {
   responseMessage: any;
   maintenanceList: any=[];
   maintenanceObj: any={};
+  isStatusComplete: boolean = false;
+
   constructor(public router:Router, public httpService:HttpService, private formBuilder: FormBuilder, private authService:AuthService)
     {
       this.itemForm = this.formBuilder.group({
@@ -40,6 +42,7 @@ export class MaintenanceComponent implements OnInit {
 ngOnInit(): void {
   this.getMaintenance();
   }  
+
   dateValidator(control: AbstractControl): ValidationErrors | null {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
  
@@ -78,6 +81,7 @@ ngOnInit(): void {
       status: val.status,
       equipmentId: val.equipmentId,
       maintenanceId:val.id
+
   });
   }
   update()

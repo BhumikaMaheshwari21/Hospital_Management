@@ -6,8 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./dashbaord.component.scss']
 })
 export class DashbaordComponent {
-
+  
 }
+
+
 // import { Component, OnInit } from '@angular/core';
 // import { Router } from '@angular/router';
 // import { AuthService } from '../../services/auth.service';

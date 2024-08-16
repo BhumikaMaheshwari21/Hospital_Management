@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
  
@@ -20,7 +20,7 @@ export class RegistrationComponent {
    
       this.itemForm = this.formBuilder.group({
         email: [this.formModel.email,[ Validators.required, Validators.email]],
-        password: [this.formModel.password,[ Validators.required]],
+        password: [this.formModel.password,[ Validators.required,this.passwordValidator]],
         role: [this.formModel.role,[ Validators.required]],
         username: [this.formModel.username,[ Validators.required]],
        
@@ -46,6 +46,17 @@ export class RegistrationComponent {
       this.itemForm.markAllAsTouched();
     }
   }
+  passwordValidator(control:AbstractControl):ValidationErrors|null
+  {
+    const pattern=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if(!pattern.test(control.value))
+    {
+      return{InvalidPassword:true};
+    }
+    return null;
+
+  }
  
  
 }
+ 

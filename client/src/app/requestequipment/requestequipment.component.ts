@@ -25,6 +25,7 @@ export class RequestequipmentComponent implements OnInit {
   constructor(public router:Router, public httpService:HttpService, private formBuilder: FormBuilder, private authService:AuthService)
     {
       this.itemForm = this.formBuilder.group({
+        //orderDate: [{ value: '', disabled: true }, Validators.required],
         orderDate: [this.formModel.scheduledDate,[ Validators.required, this.dateValidator]],  
         quantity: [this.formModel.description,[ Validators.required]],
         status: [this.formModel.status,[ Validators.required]],
@@ -33,9 +34,10 @@ export class RequestequipmentComponent implements OnInit {
     });
  
  
- 
 }  ngOnInit(): void {
   this.getHospital();
+  // const currentDate = new Date().toISOString().split('T')[0];
+  // this.itemForm.patchValue({ orderDate: currentDate });
   }
   getHospital() {
     this.hospitalList=[];

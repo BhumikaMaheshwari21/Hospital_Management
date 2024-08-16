@@ -3,8 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
- 
- 
+import { BuiltinTypeName } from '@angular/compiler';
  
 @Component({
   selector: 'app-login',
@@ -38,7 +37,6 @@ export class LoginComponent implements OnInit {
         this.authService.SetRole(data.role);
         this.authService.saveToken(data.token)
         this.router.navigateByUrl('/dashboard');
-     
        
         setTimeout(() => {
           window.location.reload();
@@ -57,7 +55,7 @@ export class LoginComponent implements OnInit {
     this.itemForm.markAllAsTouched();
   }
 }
- 
+
 registration()
   {
     this.router.navigateByUrl('/registration');

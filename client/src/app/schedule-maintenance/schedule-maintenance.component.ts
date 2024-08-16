@@ -25,7 +25,8 @@ export class ScheduleMaintenanceComponent implements OnInit {
   constructor(public router:Router, public httpService:HttpService, private formBuilder: FormBuilder, private authService:AuthService)
     {
       this.itemForm = this.formBuilder.group({
-        scheduledDate: [this.formModel.scheduledDate,[ Validators.required, this.dateValidator]],
+        scheduledDate:[{value:'',disabled:true},Validators.required],
+        //scheduledDate: [this.formModel.scheduledDate,[ Validators.required, this.dateValidator]],
         completedDate: [this.formModel.completedDate,[ Validators.required, this.dateValidator]],
         description: [this.formModel.description,[ Validators.required]],
         status: [this.formModel.status,[ Validators.required]],
@@ -33,13 +34,14 @@ export class ScheduleMaintenanceComponent implements OnInit {
         hospitalId: [this.formModel.hospitalId,[ Validators.required]],
        
     });
- 
- 
- 
-}  ngOnInit(): void {
+}  
+
+ngOnInit(): void {
   this.getHospital();
- 
+  const currentDate = new Date().toISOString().slice(0,10);
+  this.itemForm.patchValue({ scheduledDate: currentDate });
   }
+
   dateValidator(control: AbstractControl): ValidationErrors | null {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
  
